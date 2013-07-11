@@ -1,0 +1,16 @@
+name: RedstoneReporter
+main: me.hawkeye.minecraft.bukkitplugins.redstonereporter.RedstoneReporter
+version: 0.1
+description: A bukkit server plugin for reporting redstone events.
+author: Stanley Hawkeye
+commands:
+    rsreport:
+        description: Toggles the display of all redstone events in your chat
+        permission: redstonereporter.rsreport
+        permission-message: You don't have the permission to view redstone events
+        usage: Use /<command> to toggle displaying of redstone events in your chat
+
+permissions:
+    redstonereporter.rsreport:
+        default: op
+        description: Allows you to use the rsreport command
