@@ -16,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * RedstoneReporter plugin for bukkit
- * @version 0.1
+ * @version 0.2
  *
  */
 public class RedstoneReporter extends JavaPlugin implements Listener
@@ -35,6 +35,8 @@ public class RedstoneReporter extends JavaPlugin implements Listener
 	public final Logger log = Logger.getLogger("Minecraft");
 	
 	public final ArrayList<String> receiversList = new ArrayList<String>();
+	
+	boolean blocked = false;
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{
@@ -59,12 +61,37 @@ public class RedstoneReporter extends JavaPlugin implements Listener
 				sender.sendMessage("This command can only be used by players.");
 			}
 		}
+		else if(cmd.getName().equalsIgnoreCase("rsblock"))
+		{
+			if(blocked)
+				sender.sendMessage("Redstone is already blocked.");
+			else
+			{
+				blocked = true;
+				sender.sendMessage("Redstone is as of now blocked.");
+			}
+		}
+		else if(cmd.getName().equalsIgnoreCase("rsunblock"))
+		{
+			if(!blocked)
+				sender.sendMessage("Redstone is not blocked.");
+			else
+			{
+				blocked = false;
+				sender.sendMessage("Redstone is as of now allowed.");
+			}
+		}
 		return false;
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onRedstoneEvent(BlockRedstoneEvent event)
 	{
+		if(blocked)
+		{
+			event.setNewCurrent(0);
+		}
+		
 		Iterator<String> receiversIterator = receiversList.iterator();
 		while(receiversIterator.hasNext())
 		{
@@ -75,7 +102,7 @@ public class RedstoneReporter extends JavaPlugin implements Listener
 				continue;
 			}
 
-			player.sendMessage("RSE: "+event.getBlock().getTypeId()+", "+event.getBlock().getLocation().getWorld().getName()+"["+event.getBlock().getLocation().getBlockX()+", "+event.getBlock().getLocation().getBlockY()+", "+event.getBlock().getLocation().getBlockZ()+"] "+event.getOldCurrent()+"->"+event.getNewCurrent()+" "+System.currentTimeMillis());
+			player.sendMessage("RSE: "+event.getBlock().getTypeId()+", "+event.getBlock().getLocation().getWorld().getName()+"["+event.getBlock().getLocation().getBlockX()+", "+event.getBlock().getLocation().getBlockY()+", "+event.getBlock().getLocation().getBlockZ()+"] "+event.getOldCurrent()+"->"+event.getNewCurrent()+" "+System.currentTimeMillis()+( (blocked)? " (blocked)" : "" ));
 		}
 	}
 		
